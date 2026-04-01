@@ -11,16 +11,19 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Archivos estáticos
-// Archivos estáticos (ahora que el frontend está adentro)
+// --- CONFIGURACIÓN DE ARCHIVOS ESTÁTICOS ---
+// Ahora que 'frontend' está dentro de 'backend', usamos path.join sin los puntos '..'
 app.use(express.static(path.join(__dirname, 'frontend')));
 
-// Redirección raíz
+// --- REDIRECCIÓN RAÍZ ---
+// Importante: La ruta debe coincidir con la estructura interna de tu carpeta frontend
 app.get('/', (req, res) => {
+    // Al usar express.static en 'frontend', para el navegador la carpeta raíz es esa.
+    // Por eso intentamos entrar directo a /views/
     res.redirect('/views/login.html');
 });
 
-// Rutas
+// Rutas de la API
 const authRoutes = require('./routes/auth.routes');
 const habitosRoutes = require('./routes/habitos.routes');
 const progresoRoutes = require('./routes/progreso');
@@ -32,23 +35,21 @@ app.use('/api/progreso', progresoRoutes);
 app.use('/api/admin', adminRoutes);
 
 // TEST conexión DB
-const db = require('./config/db'); // O el nombre que tenga tu carpeta
+const db = require('./config/db'); 
 
 app.get('/test-db', async (req, res) => {
     try {
         const [rows] = await db.query('SELECT 1');
-        res.json({ ok: true, message: 'DB funcionando' });
+        res.json({ ok: true, message: 'DB funcionando en Render' });
     } catch (error) {
         console.error(error);
         res.status(500).json({ ok: false, error: error.message });
     }
 });
 
-// Puerto
+// Puerto dinámico para Render
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-    console.log(`Servidor corriendo en http://localhost:${PORT}`);
+    console.log(`Servidor HabitCore activo en puerto ${PORT}`);
 });
-
-// Actualización para Render 2026
