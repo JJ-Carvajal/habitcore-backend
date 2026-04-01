@@ -12,7 +12,8 @@ app.use(cors());
 app.use(express.json());
 
 // Archivos estáticos
-app.use(express.static(path.join(__dirname, '../frontend')));
+// Archivos estáticos (ahora que el frontend está adentro)
+app.use(express.static(path.join(__dirname, 'frontend')));
 
 // Redirección raíz
 app.get('/', (req, res) => {
